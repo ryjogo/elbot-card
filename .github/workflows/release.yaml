@@ -31,9 +31,6 @@ jobs:
       id: version
       run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-    - name: Update version in package.json
-      run: npm version ${{ steps.version.outputs.VERSION }} --no-git-tag-version
-
     - name: Create release archive
       run: |
         mkdir -p release
@@ -45,7 +42,7 @@ jobs:
         zip -r ../elbot-card-${{ steps.version.outputs.VERSION }}.zip .
 
     - name: Create GitHub Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           elbot-card-${{ steps.version.outputs.VERSION }}.zip
@@ -53,10 +50,3 @@ jobs:
         generate_release_notes: true
         draft: false
         prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Update HACS repository
-      run: |
-        echo "Release ${{ steps.version.outputs.VERSION }} published!"
-        echo "HACS will automatically detect this release"
