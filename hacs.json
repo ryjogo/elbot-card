@@ -1,6 +1,5 @@
 {
   "name": "Elbot Card",
-  "topics": ["home-assistant", "hacs", "custom-card"],
   "filename": "elbot-card.js",
   "render_readme": true,
   "content_in_root": false
