@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build
+      run: npm run build
+
+    - name: Get version from tag
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+    - name: Update version in package.json
+      run: npm version ${{ steps.version.outputs.VERSION }} --no-git-tag-version
+
+    - name: Create release archive
+      run: |
+        mkdir -p release
+        cp dist/elbot-card.js release/
+        cp README.md release/
+        cp LICENSE release/
+        cp hacs.json release/
+        cd release
+        zip -r ../elbot-card-${{ steps.version.outputs.VERSION }}.zip .
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          elbot-card-${{ steps.version.outputs.VERSION }}.zip
+          dist/elbot-card.js
+        generate_release_notes: true
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update HACS repository
+      run: |
+        echo "Release ${{ steps.version.outputs.VERSION }} published!"
+        echo "HACS will automatically detect this release"
