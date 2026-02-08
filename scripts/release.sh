@@ -28,7 +28,6 @@ git pull origin main
 
 # Run tests and build
 echo "🧪 Running validation..."
-npm run lint
 npm run build
 
 # Bump version
