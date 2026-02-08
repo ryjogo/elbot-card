@@ -1,6 +1,6 @@
 {
   "name": "elbot-card",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Custom Home Assistant card for electricity pricing recommendations",
   "main": "dist/elbot-card.js",
   "scripts": {
